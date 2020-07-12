@@ -1,21 +1,21 @@
 export default [
   {
-    id: Math.random() * Date.now(),
+    id: Math.random(),
     name: "rent",
     amount: 2300
   },
   {
-    id: Math.random() * Date.now(),
+    id: Math.random(),
     name: "car payment",
     amount: 400
   },
   {
-    id: Math.random() * Date.now(),
+    id: Math.random(),
     name: "student loan",
     amount: 400
   },
   {
-    id: Math.random() * Date.now(),
+    id: Math.random(),
     name: "credit card",
     amount: 2000
   }
