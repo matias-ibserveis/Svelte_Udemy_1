@@ -4,19 +4,15 @@
 
 <script>
   import {setContext} from 'svelte'
-  import { scale, blur, fade, slide, fly } from "svelte/transition";
   import Navbar from './components/Navbar.svelte'
   import ListadoUsuarios from './components/ListaUsuarios.svelte'
   import FormuNuevoUsuario from './components/FichaNueva.svelte'
-  
   // datos
   import usersData from "./others/list"
   
   // variables
   let lista_usuarios = [...usersData]
-  let esta_en_nuevo = false
-  let confirma_edit = false
-  let backup_namefirst = "backup name1"
+  let estaNuevo = false
   
 
   //variables para editar usuario
@@ -39,22 +35,17 @@
     //crea nuevo array con todo los id que NO son el que elimina
   }
 
-  function setModificarUsuario(id, editname1){
-    editname1 ? confirma_edit = true:false
+  function setModificarUsuario(id){
     let modifusuario = lista_usuarios.find(item => item._id === id )
-  
     verformularionuevo(true)
     set_id= modifusuario._id
-    backup_namefirst = modifusuario.name.first
-    editname1 ? setnamefirst = editname1 : setnamefirst = modifusuario.name.first
+    setnamefirst = modifusuario.name.first
     setnamelast = modifusuario.name.last
     setuseremail = modifusuario.email
     setuserpicture = modifusuario.picture.medium
-
   }
 
   function modificarUsuario({namefirst, namelast, useremail, userpicture}){
-
     lista_usuarios = lista_usuarios.map(item=>{
       return item._id === set_id ? {...item,          // ... devuelve propiedades ,=sobrescribe
         name: { first: namefirst, last: namelast,},
@@ -84,31 +75,19 @@
       
     //console.log(lista_usuarios)
     namefirst = "-"         //etc title, image..
-    esta_en_nuevo = false
+    estaNuevo = false
     set_id = null
   }
 
   function verformularionuevo(ver) {
-    //alert(ver)
-    ver ? esta_en_nuevo = true : asignarVacios()
+    ver ? estaNuevo = true : asignarVacios()
   }
 
-   
   function asignarVacios(){
-    //alert(confirma_edit)
-    if (!confirma_edit) {
-      esta_en_nuevo = false
+      estaNuevo = false
       set_id= null;
       setnamefirst = "name1"; setnamelast = "name2"; setuseremail = "email@prueba.es";
-      setuserpicture = "https://randomuser.me/api/portraits/med/women/7.jpg"; 
-      }
-      else {
-        setnamefirst = backup_namefirst
-        // falta??? "actualizar" listado
-        confirma_edit = false
-        esta_en_nuevo = false
-      }
-
+      setuserpicture = "https://randomuser.me/api/portraits/med/women/7.jpg";
   }
 
 
@@ -121,8 +100,7 @@
   <Navbar {verformularionuevo} />
 
   <div class="contenedor"> 
-   {#if esta_en_nuevo}
-     <div class="form-user" transition:fly={{ x: -100, duration: 600 }}>
+   {#if estaNuevo}
       <FormuNuevoUsuario 
         {agregarUsuario} 
         {verformularionuevo}
@@ -132,12 +110,9 @@
         userpicture = {setuserpicture}
         {estaEditando}
         {modificarUsuario}
-        {confirma_edit}
       />
-      </div>
    {/if}
-
-     <ListadoUsuarios lista_usuarios={lista_usuarios}  />
+   <ListadoUsuarios lista_usuarios={lista_usuarios}  />
   </div>
 
 </div>
@@ -150,16 +125,6 @@
     justify-content: center;
     flex-wrap: wrap;
     padding: 1% ;
-  }
-
-  .form-user {
-    position: absolute;
-    z-index: 1000;
-    width: 80%;
-    height: 90%;
-    background-color: #053661dc;
-    box-sizing: border-box;
-    padding: 1rem; 
   }
 
   #main-contenedor {
