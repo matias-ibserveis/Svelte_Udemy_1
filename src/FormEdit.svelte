@@ -17,28 +17,23 @@
   import { autoResize } from "./autoResize.js";
   import Title from "./Title.svelte";
   import Todos from "./Todos.svelte";
+
   export let name = "";
   export let amount = null;
   export let descripcion = "";
-  export let isEditing;
+  export let color;
+  
   export let editExpense;
   export let hideForm;
-  export let clearData;
-
-  if (name) {
-    console.log("verdadero");
-  }
+  export let paleta_colores;
+  
 
   $: isEmpty = !name || !descripcion;
 
   function handleSubmit() {
-    editExpense({ name, amount, descripcion });
-   
-    name = "";
-    amount = null;
-    descripcion = "";
+    editExpense({ name, amount, descripcion, color });
     hideForm();
-    clearData()
+    console.log(color)
   }
 </script>
 
@@ -111,63 +106,20 @@
     cursor: pointer;
     border-radius: 4px;
   }
-  .btn-cerrar:hover{
+  .btn-cerrar:hover {
     background-color: rgb(235, 235, 235);
   }
-  .form__utilidades {
-    position: absolute;
-    bottom: 5px;
-    display: flex;
-  }
-  .form__utilidades__item {
-    position: relative;
-    margin: 0 1px;
-    cursor: pointer;
-    transition: all 0.1s;
-  }
-  .form__utilidades__item--icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100%;
-    width: 32px;
-    height: 32px;
-
-    color: rgb(90, 90, 90);
-  }
-  .form__utilidades__item:hover {
-  }
-  .form__utilidades__item:hover > .form__utilidades__item--icon {
-    background-color: rgb(238, 238, 238);
-  }
-  .form__utilidades__item:hover > .form__utilidades__item--utilidad {
-    display: block;
-  }
-  .form__utilidades__item--utilidad {
-    display: none;
-    position: absolute;
-    top: 40px;
-    left: 5px;
-    background-color: rgb(247, 247, 247);
-    padding: 30px 20px;
-    z-index: 11111;
-  }
-  .form__utilidades__item--utilidad input {
-    color: rgb(51, 51, 51);
-    width: 100%;
-    border: none;
-    margin-bottom: 5px;
-    padding: 0.5rem;
-    font-size: 0.9em;
-    font-weight: 500;
-    font-family: "Open Sans", sans-serif;
-  }
+ 
 </style>
 
-<section class="form">
-  <form class="expense-form" on:submit|preventDefault={handleSubmit}>
+<section class="form" style="background-color:{color}">
+  <form
+    style="background-color:{color}"
+    class="expense-form"
+    on:submit|preventDefault={handleSubmit}>
     <div class="form-control">
       <input
+        style="background-color:{color}"
         type="text"
         id="name"
         bind:value={name}
@@ -176,6 +128,7 @@
     </div>
     <div class="form-control">
       <textarea
+        style="background-color:{color}"
         type="text"
         bind:value={descripcion}
         use:autoResize
@@ -202,19 +155,28 @@
         <div class="form__utilidades__item--icon">
           <i class="fas fa-palette" />
         </div>
+        <div class="form__utilidades__item--utilidad">
+          <ul class="color-note">
+            {#each paleta_colores as paleta_color, index}
+              <input type="radio" value={paleta_color} bind:group={color} />
+              <span
+                class="color-note__item"
+                class:active={color}
+                style="color:transparent; background-color: {paleta_color}; border:1px
+                solid rgb(216, 216, 216);">
+                {paleta_color}
+              </span>
+            {/each}
+          </ul>
+        </div>
       </div>
     </div>
     <!-- {#if isEmpty}
       <p class="form-empty">Por favor rellena bien el formulario</p>
     {/if} -->
-    
-      <button
-        type="submit"
-        class="btn-cerrar"
-        disabled={isEmpty}>
-        Cerrar
-      </button>
-    
+
+    <button type="submit" class="btn-cerrar">Cerrar</button>
+
     <!-- <button type="button" class="close-btn" on:click={hideForm}>
       <i class="fas fa-times" />
       <span>Cerrar</span>

@@ -2,6 +2,7 @@
   import { blur, slide, scale, fade, fly } from "svelte/transition";
   import { quintOut } from "svelte/easing";
   import { getContext } from "svelte";
+  import { autoResize } from "./autoResize.js";
 
   export let index;
   export let expense;
@@ -15,21 +16,32 @@
   const setEditExpense = getContext("edit");
 </script>
 
-<article class="single-expense">
+<style>
+  .nota-vacia {
+    margin: 10px 0;
+  }
+</style>
+
+<article use:autoResize class="single-expense" style="background-color:{expense.color}">
 
   <div class="expense-info">
-    <h2>
-      {expense.name}
-      {#if expense.amount != null}
-        <button class="amount-btn" on:click={toggleAmount}>
-          <i class="fas fa-caret-down" />
-        </button>
+    {#if !expense.name == '' && !expense.descripcion == ''}
+      <h2>
+        {expense.name}
+        {#if expense.amount != null}
+          <button class="amount-btn" on:click={toggleAmount}>
+            <i class="fas fa-caret-down" />
+          </button>
+        {/if}
+      </h2>
+      <p>{expense.descripcion}</p>
+      {#if EstadoAmount}
+        <h4 transition:slide>amount: ${expense.amount}</h4>
       {/if}
-    </h2>
-    <p>{expense.descripcion}</p>
-    {#if EstadoAmount}
-      <h4 transition:slide>amount: ${expense.amount}</h4>
+    {:else}
+      <h1 class="nota-vacia">Nota vacia</h1>
     {/if}
+
   </div>
   <div class="form__utilidades">
     <div class="form__utilidades__item">
@@ -38,9 +50,7 @@
         on:click={setEditExpense(expense.id)}>
         <i class="fas fa-pen" />
       </button>
-      <span class="form__utilidades__item--mensaje">
-        Editar
-      </span>
+      <span class="form__utilidades__item--mensaje">Editar</span>
     </div>
     <div class="form__utilidades__item">
       <button
@@ -48,9 +58,7 @@
         on:click={removeExpense(expense.id)}>
         <i class="fas fa-trash" />
       </button>
-      <span class="form__utilidades__item--mensaje">
-        Eliminar 
-      </span>
+      <span class="form__utilidades__item--mensaje">Eliminar</span>
     </div>
   </div>
 </article>

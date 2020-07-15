@@ -22,12 +22,27 @@
 
   // Variables
   let expenses = [];
+  let paleta_colores = [
+    "#ffffff",
+    "#f28b82",
+    "#fbbc04",
+    "#fff475",
+    "#ccff90",
+    "#a7ffeb",
+    "#cbf0f8",
+    "#aecbfa",
+    "#d7aefb",
+    "#fdcfe8",
+    "#e6c9a8",
+    "#e8eaed",
+  ];
 
   //set editing variables
   let setName = "";
   let setAmount = null;
   let setId = null;
   let setDescripcion = "";
+  let setColor = "";
 
   //toggle
 
@@ -40,21 +55,14 @@
   }, 0);
 
   //functions
+
   function showForm() {
     isFormOpen = true;
   }
   function hideForm() {
     isFormOpen = false;
-    setId = null;
-    setAmount = null;
-    setName = "";
   }
-  function clearData() {
-    setId = null;
-    setAmount = null;
-    setName = "";
-    setDescripcion = "";
-  }
+ 
 
   function removeExpense(id) {
     expenses = expenses.filter((item) => item.id !== id);
@@ -63,12 +71,13 @@
     let alerta = confirm("seguro que deseas eliminar todas las notas?");
     alerta ? (expenses = []) : "";
   }
-  function addExpense(name, amount, descripcion) {
+  function addExpense(name, amount, descripcion, color) {
     let expense = {
       id: Math.random() * Date.now(),
       name,
       descripcion,
       amount,
+      color,
     };
     expenses = [expense, ...expenses];
   }
@@ -82,18 +91,19 @@
     setName = expense.name;
     setAmount = expense.amount;
     setDescripcion = expense.descripcion;
+    setColor = expense.color;
+    console.log(setColor);
     showForm();
   }
-  function editExpense({ name, amount, descripcion }) {
+  function editExpense({ name, amount, descripcion, color }) {
+    console.log(name, amount, descripcion, color)
     expenses = expenses.map((item) => {
       return item.id === setId
-        ? { ...item, name, amount, descripcion }
+        ? { ...item, name, amount, descripcion, color }
         : { ...item };
     });
-    setId = null;
-    setAmount = null;
-    setName = "";
-    setDescripcion = "";
+    console.log(expenses)
+    console.log(color)
   }
 
   setContext("remove", removeExpense);
@@ -133,7 +143,7 @@
     border: none;
     border-radius: 4px;
   }
-  .btn-borrarTodasNotas:hover{
+  .btn-borrarTodasNotas:hover {
     background-color: #414141;
   }
 </style>
@@ -141,15 +151,16 @@
 <!-- <svelte:body style={isFormOpen ? 'overflowHidden' : ''} /> -->
 <Navbar {showForm} />
 <main class="content">
-  <ExpenseForm {addExpense} {clearData} {isEditing} {hideForm} />
+  <ExpenseForm {paleta_colores} {addExpense}   />
   <!--   <Githubawait /> -->
   {#if isFormOpen}
     <Modal>
       <FormEdit
-        {clearData}
+        {paleta_colores}
         name={setName}
         amount={setAmount}
         descripcion={setDescripcion}
+        color={setColor}
         {editExpense}
         {hideForm} />
     </Modal>

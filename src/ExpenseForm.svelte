@@ -17,28 +17,24 @@
   import { autoResize } from "./autoResize.js";
   import Title from "./Title.svelte";
   import Todos from "./Todos.svelte";
+
   export let name = "";
   export let amount = null;
   export let descripcion = "";
+  export let color = "#ffffff";
+  
   export let addExpense;
-  export let isEditing;
-  export let hideForm;
-  export let clearData;
+  export let paleta_colores;
 
-  if (name) {
-    console.log("verdadero");
-  }
 
   $: isEmpty = !name || !descripcion;
 
   function handleSubmit() {
-      addExpense(name, amount, descripcion);
-    
+    addExpense(name, amount, descripcion, color);
     name = "";
     amount = null;
     descripcion = "";
-    hideForm();
-    clearData()
+    color = "#ffffff";
   }
 </script>
 
@@ -116,12 +112,19 @@
     cursor: pointer;
   }
 
+  .active {
+    border: 1px solid black !important;
+  }
 </style>
 
 <section class="form">
-  <form class="expense-form" on:submit|preventDefault={handleSubmit}>
+  <form
+    style="background-color:{color}"
+    class="expense-form"
+    on:submit|preventDefault={handleSubmit}>
     <div class="form-control">
       <input
+        style="background-color:{color}"
         type="text"
         id="name"
         bind:value={name}
@@ -130,6 +133,7 @@
     </div>
     <div class="form-control">
       <textarea
+        style="background-color:{color}"
         type="text"
         bind:value={descripcion}
         use:autoResize
@@ -156,19 +160,39 @@
         <div class="form__utilidades__item--icon">
           <i class="fas fa-palette" />
         </div>
+        <div class="form__utilidades__item--utilidad">
+          <ul class="color-note">
+            {#each paleta_colores as paleta_color, index}
+              <div class="color-note__group">
+                <input
+                  type="radio"
+                  value={paleta_color}
+                  bind:group={color}
+                  name={paleta_color} />
+                <label
+                  for={paleta_color}
+                  class="color-note__item"
+                  style="color:transparent; background-color: {paleta_color};
+                  border:1px solid rgb(216, 216, 216);">
+                  {paleta_color}
+                </label>
+              </div>
+            {/each}
+          </ul>
+        </div>
       </div>
     </div>
     <!-- {#if isEmpty}
       <p class="form-empty">Por favor rellena bien el formulario</p>
     {/if} -->
-      <button
-        type="submit"
-        class="btn-add"
-        class:disabled={isEmpty}
-        disabled={isEmpty}>
-        <i class="fas fa-plus" />
-      </button>
-  
+    <button
+      type="submit"
+      class="btn-add"
+      class:disabled={isEmpty}
+      disabled={isEmpty}>
+      <i class="fas fa-plus" />
+    </button>
+
     <!-- <button type="button" class="close-btn" on:click={hideForm}>
       <i class="fas fa-times" />
       <span>Cerrar</span>
